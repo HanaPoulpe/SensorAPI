@@ -1,11 +1,17 @@
+"""benzaitensensord Flask entry point."""
 import flask
 
 app = flask.Flask(__name__)
 
 
-@app.route('/')
-def hello_world():  # put application's code here
-    return 'Hello World!'
+@app.route("/")
+def hello_world() -> str:
+    """
+    Hello World
+
+    :returns: str
+    """
+    return "Hello World!"
 
 
 def main():
@@ -13,5 +19,5 @@ def main():
     app.run()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
