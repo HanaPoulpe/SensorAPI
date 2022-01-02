@@ -14,3 +14,13 @@ class AppConfig(typing.Protocol):
         :param conf: Configuration set
         """
         ...
+
+    def get(self, item: str) -> typing.Any:
+        """
+        Returns item value
+
+        :param item: item name
+        :type item: str
+        :return: any
+        """
+        ...

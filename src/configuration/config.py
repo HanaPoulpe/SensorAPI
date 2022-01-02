@@ -19,9 +19,9 @@ class Config(typing.Protocol):
         """
         ...
 
-    def get_parameters(self) -> typing.Mapping[str, typing.Any]:
+    def get_parameters(self) -> typing.Mapping[str, typing.Callable[[], typing.Any]]:
         """
-        Return the list of configuration parameter found in the configuration
+        Return a map of parameter names -> function that returns the parameter value
 
         :return : A mapping of configuration/values
         """
