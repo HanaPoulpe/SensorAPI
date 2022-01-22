@@ -1,5 +1,4 @@
 """Metrics hook for benzaitensensord api"""
-import collections
 import dataclasses
 import datetime
 import json
@@ -11,18 +10,29 @@ import pydantic.dataclasses as p_dataclasses
 
 import benzaitensensor
 
-blue_print = flask.Blueprint("metrics", "benzaitensensord")
+blue_print = flask.Blueprint(
+    "metrics",
+    "benzaitensensord",
+    url_prefix="/metrics",
+)
 
 
 def check_authorized(api_key: str, sensor_id: str, method: str, source: str) -> bool:
-    """Checks if the request is authorized"""
+    """
+    Checks if the request is authorized
+
+    ATM does nothing
+    """
     return True
 
 
-@blue_print.route("/", methods=("GET", "POST"))
+@blue_print.route("/", methods=("GET", "PUT"))
 def metrics_base() -> typing.Tuple[str, int]:
     """
+    API Path: /metrics
     Base metric manipulations
+
+    It will call the specifics functions for each method
 
     :return: Response Body
     """
@@ -43,7 +53,7 @@ def response(*, http_code: int,
              error_code: int | None = None,
              **kwargs) -> typing.Tuple[str, int]:
     """
-    Create response body
+    Create response body from http code, error message/code
 
     :param http_code: HTTP return code
     :param error_message: Error message
@@ -83,15 +93,21 @@ def response(*, http_code: int,
 
 @p_dataclasses.dataclass(frozen=True)
 class PutRequest:
-    """Put request definition"""
+    """
+    Put request definition
+
+    ATM: does nothing
+    """
 
     class Config:
         """Pydantic config"""
+
         arbitrary_types_allowed = True
 
     @p_dataclasses.dataclass(frozen=True)
     class MetricValue:
         """Metric Value definition"""
+
         value: float
         timestamp: datetime.datetime = dataclasses.field(
             default_factory=datetime.datetime.utcnow())
@@ -104,6 +120,8 @@ class PutRequest:
 def metrics_put(request: flask.Request) -> typing.Tuple[str, int]:
     """
     Stores new metrics values.
+
+    ATM: Does Nothing
 
     :param request: Flask request
     :return: Return body, http code

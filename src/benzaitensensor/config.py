@@ -2,7 +2,6 @@
 import logging
 import typing
 
-import configuration
 import configuration.exceptions
 
 
@@ -11,10 +10,10 @@ class DefaultConfig:
 
     __slots__ = ["default_values"]
 
-    def __init__(self):
+    def __init__(self, default_logger: logging.Logger | None = None):
         self.default_values = {
             # Logger Setup
-            "logger": logging.getLogger("bensaitensensord"),
+            "logger": default_logger or logging.getLogger("bensaitensensord"),
             "logger.level": logging.DEBUG,
             # Base directories
             "application.dir.blueprints": "./blueprints",
@@ -22,11 +21,11 @@ class DefaultConfig:
 
     def load(self) -> None:
         """Nothing to load"""
-        pass
+        pass  # pragma: no cover
 
     def check(self) -> list[configuration.exceptions.ConfigError]:
         """Nothing to check"""
-        pass
+        pass  # pragma: no cover
 
     def update(self, conf: configuration.Config):
         """
@@ -34,7 +33,7 @@ class DefaultConfig:
 
         :param conf:
         """
-        pass
+        pass  # pragma: no cover
 
     def get_parameters(self) -> typing.Mapping[str, typing.Callable[[], typing.Any]]:
         """
@@ -42,7 +41,12 @@ class DefaultConfig:
 
         :return : A mapping of configuration/values
         """
-        return {k: lambda: v for k, v in self.default_values.items()}
+
+        def __getter(v: str) -> typing.Callable[[], typing.Any]:
+            """Creates a getter"""
+            return lambda: self.default_values[v]
+
+        return {k: __getter(k) for k in self.default_values.keys()}
 
 
 class ApplicationConfiguration:
@@ -50,27 +54,13 @@ class ApplicationConfiguration:
 
     __instance: typing.Optional["ApplicationConfiguration"] = None
 
-    @classmethod
-    def get_instance(cls):
-        """Returns the Application configuration"""
-        if not cls.__instance:
-            cls()
-        return cls.__instance
-
-    @classmethod
-    def __set_instance(cls, instance: "ApplicationConfiguration"):
-        """Sets the application instance if not set"""
-        if not cls.__instance:
-            cls.__instance = instance
-
     def __new__(cls, *args, **kwargs):
+        """Replaces the instance creation to provide always return the same instance"""
         if not cls.__instance:
-            return cls.__init__(*args, **kwargs)
+            cls.__instance = super(ApplicationConfiguration, cls).__new__(cls)
         return cls.__instance
 
     def __init__(self):
-        self.__set_instance(self)
-
         self.getters: dict[str, typing.Callable[[], typing.Any]] = dict()
         self.update(DefaultConfig())
 
@@ -85,8 +75,9 @@ class ApplicationConfiguration:
 
     def get(self, item: str) -> typing.Any:
         """
-        Return
+        Get a configuration value from its name
+
         :param item: Parameter name
         :return: parameter value
         """
-        return self.__dict__.get(item, lambda: None)()
+        return self.getters.get(item, lambda: None)()
