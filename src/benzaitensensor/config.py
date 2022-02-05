@@ -1,5 +1,6 @@
 """Default configuration"""
 import logging
+import os.path
 import typing
 
 import configuration.exceptions
@@ -11,12 +12,14 @@ class DefaultConfig:
     __slots__ = ["default_values"]
 
     def __init__(self, default_logger: logging.Logger | None = None):
+        app_path = os.path.dirname(__file__)
         self.default_values = {
             # Logger Setup
             "logger": default_logger or logging.getLogger("bensaitensensord"),
             "logger.level": logging.DEBUG,
             # Base directories
-            "application.dir.blueprints": "./blueprints",
+            "application.dir": app_path,
+            "application.dir.blueprints": f"{app_path}/blueprints",
         }
 
     def load(self) -> None:

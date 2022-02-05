@@ -40,7 +40,8 @@ def create_app() -> flask.Flask:
             continue
 
         module_spec = importlib.util.spec_from_file_location(
-            f"blueprint.{file[:file.rfind('.')]}", os.path.join(blueprint_dir, file)
+            f"blueprint.{file[:file.rfind('.')]}",
+            os.path.join(blueprint_dir, file),
         )
         module = importlib.util.module_from_spec(module_spec)
         module_spec.loader.exec_module(module)
@@ -57,5 +58,5 @@ def create_app() -> flask.Flask:
     return app
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     create_app().run()
