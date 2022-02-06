@@ -1,17 +1,13 @@
 """Tests metrics blue print"""
 import json
-import os
 import typing
-import unittest
 import unittest.mock
 
-import flask
 import flask.testing
 import flask_unittest as funittest
 
 import src.benzaitensensor as benzaitensensor
 import src.benzaitensensor.helpers
-import src.benzaitensensor.helpers as helpers
 
 
 class TestMetrics(funittest.AppClientTestCase):
